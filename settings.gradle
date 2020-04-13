@@ -1,0 +1,3 @@
+rootProject.name='TabBarDrag'
+include ':app'
+include ':tabbardraganddrop'
