@@ -122,7 +122,7 @@ public class BottomMenu extends LinearLayout implements BottomMenuAdapter.ClickC
 
     private void initTopMenu() {
         top_recycle_view.setLayoutManager(new GridLayoutManager(getContext(), 4));
-        top_recycle_view.addItemDecoration(new GridSpacingItemDecoration(4, 40, false));
+        top_recycle_view.addItemDecoration(new BottomMenuGridSpacingItemDecoration(4, 40, false));
         mTopMenuAdapter = new TopMenuAdapter(this, topItemView, topItemText, mOnTouchListener, mBottomMenuDragListener);
         mTopMenuAdapter.setSelectedItemList(selectedList);
         top_recycle_view.setAdapter(mTopMenuAdapter);
