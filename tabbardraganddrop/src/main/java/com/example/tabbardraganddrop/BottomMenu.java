@@ -47,7 +47,7 @@ public class BottomMenu extends LinearLayout implements BottomMenuAdapter.ClickC
 //    private String[] topViewTextList = {"賽事", "首頁", "我的", "我的"};
     private int[] topViewList;
     private String[] topViewTextList;
-    private int[] bottomViewList = {R.drawable.menu_gamelist, R.drawable.menu_mine, R.drawable.menu_home};
+    private int[] bottomViewList = {R.drawable.menu_gamelist, R.drawable.menu_mine, R.drawable.menu_home, R.drawable.menu_mine, R.drawable.menu_gamelist};
     private ArrayList<Integer> topItemView = new ArrayList<>();
     private ArrayList<String> topItemText = new ArrayList<>();
     private ArrayList<Integer> selectedList = new ArrayList<>();
@@ -61,9 +61,6 @@ public class BottomMenu extends LinearLayout implements BottomMenuAdapter.ClickC
     private long[] vibratorPattern = {100, 200};
 
     private BottomMenuClickCallBack bottomMenuClickCallBack;
-
-    public int fixedPositionInBottomMenuIndex = -1;
-    public int fixedPositionInBottomMenuResId = -1;
 
     public BottomMenu(Context context) {
         super(context);
@@ -132,21 +129,16 @@ public class BottomMenu extends LinearLayout implements BottomMenuAdapter.ClickC
     private void initBottomMenu() {
         bottom_recycle_view.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
         mBottomMenuAdapter = new BottomMenuAdapter(this, selectedList, mBottomMenuDragListener, this);
-        mBottomMenuAdapter.setNowPageIndex(0);
+        mBottomMenuAdapter.setNowPageIndex(2);
         bottom_recycle_view.setAdapter(mBottomMenuAdapter);
         mBottomMenuAdapter.notifyDataSetChanged();
         bottomMenuItemTouchHelper.attachToRecyclerView(null);
     }
 
     // 設定不想要被滑動的Item
-    public void setFixedPositionInBottomMenu(int position) {
+    public void setFixedPosition(int position) {
         if (bottomViewList == null || bottomViewList.length == 0 || mBottomMenuAdapter == null)
             return;
-        fixedPositionInBottomMenuIndex = position;
-        for (int i = 0; i < bottomViewList.length; i++) {
-            if (fixedPositionInBottomMenuIndex != -1 && fixedPositionInBottomMenuIndex == i)
-                fixedPositionInBottomMenuResId = bottomViewList[i];
-        }
         mBottomMenuAdapter.setFixedPosition(position);
     }
 
@@ -172,15 +164,13 @@ public class BottomMenu extends LinearLayout implements BottomMenuAdapter.ClickC
                 final int fromPos = from.getAdapterPosition();
                 final int toPos = target.getAdapterPosition();
 
-                Log.d("tag12345", "fromPos: " + fromPos + "　toPos: " + toPos);
+                if (from.getItemViewType() != target.getItemViewType())
+                    return false;
 
                 // 設定不可被移動的Item時判斷
-                if (fixedPositionInBottomMenuIndex != -1 && toPos == fixedPositionInBottomMenuIndex) {
-                    return false;
-                } else {
-                    mBottomMenuAdapter.moveBottomMenuItem(fromPos, toPos);
-                    return true;
-                }
+                mBottomMenuAdapter.moveBottomMenuItem(fromPos, toPos);
+                return true;
+
             } else {
                 return false;
             }
@@ -191,12 +181,14 @@ public class BottomMenu extends LinearLayout implements BottomMenuAdapter.ClickC
         @Override
         public int getMovementFlags(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder) {
 //            return super.getMovementFlags(recyclerView, viewHolder);
-            if (viewHolder.getAdapterPosition() == fixedPositionInBottomMenuIndex) {
+
+            if (viewHolder.getItemViewType() == BottomMenuAdapter.TYPE_NO_DRAG) {
                 return makeFlag(ItemTouchHelper.ACTION_STATE_IDLE, START | END);
             } else {
                 return makeFlag(ItemTouchHelper.ACTION_STATE_DRAG,
                         START | END);
             }
+
         }
 
         @Override

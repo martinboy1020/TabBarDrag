@@ -31,6 +31,8 @@ public class BottomMenuAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     private Animation mSnake;
     private BottomMenuAdapter.ClickCallBack bottomMenuAdapterCallback;
     private int fixedPosition = -1;
+    public static final int TYPE_NO_DRAG = 0;
+    public static final int TYPE_CAN_DRAG = 1;
 
     BottomMenuAdapter(BottomMenu bottomMenu, ArrayList<Integer> bottomDrawIdList, View.OnDragListener onDragListener, BottomMenuAdapter.ClickCallBack bottomMenuAdapterCallback) {
         this.bottomMenu = bottomMenu;
@@ -46,6 +48,19 @@ public class BottomMenuAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_bottom_menu, null);
         return new ViewHolder(view, mBottomItemWidth);
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+
+        if (position == 2) {
+            return TYPE_NO_DRAG;
+        } else {
+            return TYPE_CAN_DRAG;
+        }
+
+//        return TYPE_CAN_DRAG;
+
     }
 
     private int defineViewWidth(Context context) {
@@ -99,26 +114,6 @@ public class BottomMenuAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     void isTopViewShow(boolean isTopViewShow) {
         this.isTopViewShow = isTopViewShow;
-        if (!isTopViewShow && fixedPosition != -1 && fixedPosition != bottomMenu.fixedPositionInBottomMenuIndex) {
-            // 恢復需要被固定的Item位置 以及恢復nowPageIndex
-            // 因為fixedPosition的關係會導致原本的nowPageIndex位置變成了原本應該要固定的位置上
-            // 所以刷新時要將nowPageIndex改成fixedPosition的值
-            Log.d("tag123", "nowPageIndex1: " + nowPageIndex);
-            nowPageIndex = fixedPosition;
-            Log.d("tag123", "fixedPosition: " + fixedPosition);
-            Log.d("tag123", "nowPageIndex2: " + nowPageIndex);
-            Log.d("tag123", "bottomMenu.fixedPositionInBottomMenuResId: " + bottomMenu.fixedPositionInBottomMenuResId);
-
-            for(int item : bottomDrawIdList) {
-                Log.d("tag123", "before item: " + item);
-            }
-            bottomDrawIdList.remove(fixedPosition);
-            fixedPosition = bottomMenu.fixedPositionInBottomMenuIndex;
-            bottomDrawIdList.add(fixedPosition, bottomMenu.fixedPositionInBottomMenuResId);
-            for(int item : bottomDrawIdList) {
-                Log.d("tag123", "after item: " + item);
-            }
-        }
         notifyDataSetChanged();
     }
 
@@ -129,7 +124,6 @@ public class BottomMenuAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     void setFixedPosition(int fixedPosition) {
         this.fixedPosition = fixedPosition;
-//        notifyDataSetChanged();
     }
 
     void closeSelectList() {
@@ -154,17 +148,7 @@ public class BottomMenuAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             nowPageIndex = fromPos;
         }
         Collections.swap(bottomDrawIdList, fromPos, toPos);
-        // 找出目前需要被固定的Item現在的位置
-        if (fixedPosition != -1) {
-            for (int i = 0; i < bottomDrawIdList.size(); i++) {
-                if (bottomDrawIdList.get(i) == bottomMenu.fixedPositionInBottomMenuResId) {
-                    fixedPosition = i;
-                    break;
-                }
-            }
-        }
-        notifyItemMoved(toPos, fromPos);
-//        notifyItemMoved(fromPos, toPos);
+        notifyItemMoved(fromPos, toPos);
     }
 
     ArrayList<Integer> getBottomDrawDataList() {
