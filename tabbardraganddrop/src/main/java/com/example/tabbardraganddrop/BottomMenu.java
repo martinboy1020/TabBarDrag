@@ -29,6 +29,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 
 import static androidx.recyclerview.widget.ItemTouchHelper.END;
 import static androidx.recyclerview.widget.ItemTouchHelper.START;
@@ -115,6 +116,26 @@ public class BottomMenu extends LinearLayout implements BottomMenuAdapter.ClickC
 
         initTopMenu();
         initBottomMenu();
+    }
+
+    // 如果未來有要將不使用的項目移除掉 可能就需要特別檢查現在被存取的值是否已不存在
+    public ArrayList<Integer> checkIsNotExistItem(ArrayList<Integer> selectedList, ArrayList<Integer> nowTopItemList) {
+        Collection<Integer> noExistItemList = new ArrayList<>(selectedList);
+        noExistItemList.removeAll(nowTopItemList);
+
+        if (noExistItemList.size() > 0) {
+
+            for (int noExistItem : noExistItemList) {
+
+                if (selectedList.contains(noExistItem))
+                    selectedList.remove(Integer.valueOf(noExistItem));
+
+            }
+
+        }
+
+        return selectedList;
+
     }
 
     private void initTopMenu() {
