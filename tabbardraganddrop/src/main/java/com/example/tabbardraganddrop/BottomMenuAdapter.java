@@ -30,9 +30,8 @@ public class BottomMenuAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     private boolean isTopViewShow = false;
     private Animation mSnake;
     private BottomMenuAdapter.ClickCallBack bottomMenuAdapterCallback;
-    private int fixedPosition = -1;
-    public static final int TYPE_NO_DRAG = 0;
-    public static final int TYPE_CAN_DRAG = 1;
+    static final int TYPE_NO_DRAG = 0;
+    private static final int TYPE_CAN_DRAG = 1;
 
     BottomMenuAdapter(BottomMenu bottomMenu, ArrayList<Integer> bottomDrawIdList, View.OnDragListener onDragListener, BottomMenuAdapter.ClickCallBack bottomMenuAdapterCallback) {
         this.bottomMenu = bottomMenu;
@@ -120,10 +119,6 @@ public class BottomMenuAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     void setNowPageIndex(int pageIndex) {
         nowPageIndex = pageIndex;
         notifyDataSetChanged();
-    }
-
-    void setFixedPosition(int fixedPosition) {
-        this.fixedPosition = fixedPosition;
     }
 
     void closeSelectList() {

@@ -17,10 +17,9 @@ public class MainActivity extends AppCompatActivity implements BottomMenu.Bottom
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         title = findViewById(R.id.title);
-        title.setText("現在是: " + "賽事");
+        title.setText("現在是: " + "首頁");
         bottomMenu = findViewById(R.id.bottomMenu);
         bottomMenu.init(null, this);
-//        bottomMenu.setFixedPositionInBottomMenu(1);
     }
 
     @Override

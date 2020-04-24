@@ -100,19 +100,16 @@ public class BottomMenu extends LinearLayout implements BottomMenuAdapter.ClickC
         for (int i = 0; i < resIds.length(); i++) {
             topViewList[i] = resIds.getResourceId(i, -1);
         }
-        Log.d("tag1", "topViewList: " + topViewList.length);
         resIds.recycle();
         for (int item : topViewList) {
             topItemView.add(item);
         }
         topViewTextList = getResources().getStringArray(R.array.tab_bar_item_title_array_1);
-        Log.d("tag1", "topViewTextList: " + topViewTextList.length);
         topItemText.addAll(Arrays.asList(topViewTextList));
 
         for (int value : bottomViewList) {
             selectedList.add(value);
         }
-        Log.d("tag1", "selectedList: " + selectedList.size());
         initTopMenu();
         initBottomMenu();
     }
@@ -159,13 +156,6 @@ public class BottomMenu extends LinearLayout implements BottomMenuAdapter.ClickC
         bottom_recycle_view.setAdapter(mBottomMenuAdapter);
         mBottomMenuAdapter.notifyDataSetChanged();
         bottomMenuItemTouchHelper.attachToRecyclerView(null);
-    }
-
-    // 設定不想要被滑動的Item
-    public void setFixedPosition(int position) {
-        if (bottomViewList == null || bottomViewList.length == 0 || mBottomMenuAdapter == null)
-            return;
-        mBottomMenuAdapter.setFixedPosition(position);
     }
 
     public void refreshTopBottomMenu(ArrayList<Integer> selectedList) {
@@ -382,7 +372,7 @@ public class BottomMenu extends LinearLayout implements BottomMenuAdapter.ClickC
     public void BottomMenuAdapterClickEvent(int nowPosition) {
 
         int nowSelectedItemResId = mBottomMenuAdapter.getBottomDrawDataList().get(nowPosition);
-        String nowSelectedItemText = "";
+        String nowSelectedItemText = "首頁";
 
         for (int i = 0; i < topItemView.size(); i++) {
             if (topItemView.get(i) == nowSelectedItemResId) {
