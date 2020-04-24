@@ -132,8 +132,8 @@ public class BottomMenuAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     }
 
     void refreshBottomMenuItem(int index, int imgTag) {
-        //目前頁面不能被換掉
-        if (index == nowPageIndex)
+        //目前頁面不能被換掉 或是已設定為不可拖曳項目不可被換掉
+        if (index == nowPageIndex || getItemViewType(index) == TYPE_NO_DRAG)
             return;
         bottomDrawIdList.remove(index);
         bottomDrawIdList.add(index, imgTag);

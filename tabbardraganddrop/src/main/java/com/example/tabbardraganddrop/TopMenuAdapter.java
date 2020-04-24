@@ -23,6 +23,7 @@ public class TopMenuAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private View.OnDragListener onDragListener;
     private Animation mSnake;
     private boolean isTopViewShow = false;
+    private int isNowDragViewTag = 0;
 
     TopMenuAdapter(BottomMenu bottomMenu, ArrayList<Integer> topDrawIdList, ArrayList<String> topTextList, View.OnTouchListener onTouchListener, View.OnDragListener onDragListener) {
         this.onTouchListener = onTouchListener;
@@ -53,7 +54,13 @@ public class TopMenuAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         ((ViewHolder) holder).imageView.setSelected(checkItemIsSelected(topDrawIdList.get(position)));
 
         if(isTopViewShow) {
-            ((ViewHolder) holder).imageView.setAnimation(mSnake);
+            if (isNowDragViewTag != 0 && isNowDragViewTag == topDrawIdList.get(position)) {
+                ((ViewHolder) holder).imageView.setAnimation(null);
+                ((ViewHolder) holder).imageView.setSelected(false);
+            } else {
+                ((ViewHolder) holder).imageView.setAnimation(mSnake);
+                ((ViewHolder) holder).imageView.setSelected(checkItemIsSelected(topDrawIdList.get(position)));
+            }
         } else {
             ((ViewHolder) holder).imageView.setAnimation(null);
         }
@@ -105,6 +112,23 @@ public class TopMenuAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             text_item_menu = itemView.findViewById(R.id.text_item_menu);
             imageView = itemView.findViewById(R.id.img_item_menu);
         }
+    }
+
+    void startDragItem(View view) {
+        if(isNowDragViewTag == 0) {
+            isNowDragViewTag = (int) view.getTag();
+            for (int i = 0; i < topDrawIdList.size(); i++) {
+                if (topDrawIdList.get(i) == isNowDragViewTag) {
+                    notifyItemChanged(i);
+                    break;
+                }
+            }
+        }
+    }
+
+    void endDragItem(View view) {
+        isNowDragViewTag = 0;
+        notifyDataSetChanged();
     }
 
 }

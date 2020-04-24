@@ -35,7 +35,7 @@ import static androidx.recyclerview.widget.ItemTouchHelper.END;
 import static androidx.recyclerview.widget.ItemTouchHelper.START;
 import static androidx.recyclerview.widget.ItemTouchHelper.SimpleCallback;
 
-public class BottomMenu extends LinearLayout implements BottomMenuAdapter.ClickCallBack {
+public class BottomMenu extends LinearLayout implements BottomMenuAdapter.ClickCallBack, BottomMenuDragListener.ChangeStatusCallBack {
 
     private RelativeLayout top_recycle_view_bg;
     private RecyclerView top_recycle_view, bottom_recycle_view;
@@ -44,11 +44,8 @@ public class BottomMenu extends LinearLayout implements BottomMenuAdapter.ClickC
     private TopMenuAdapter mTopMenuAdapter;
     private BottomMenuAdapter mBottomMenuAdapter;
 
-    //    private int[] topViewList = {R.drawable.menu_gamelist, R.drawable.menu_home, R.drawable.menu_mine};
-//    private String[] topViewTextList = {"賽事", "首頁", "我的", "我的"};
-    private int[] topViewList;
     private String[] topViewTextList;
-    private int[] bottomViewList = {R.drawable.menu_gamelist, R.drawable.menu_mine, R.drawable.menu_home, R.drawable.menu_mine, R.drawable.menu_gamelist};
+    private int[] bottomViewList = {R.drawable.menu_gamelist, R.drawable.menu_mine, R.drawable.menu_home, R.drawable.menu_game_data, R.drawable.menu_game_like};
     private ArrayList<Integer> topItemView = new ArrayList<>();
     private ArrayList<String> topItemText = new ArrayList<>();
     private ArrayList<Integer> selectedList = new ArrayList<>();
@@ -84,7 +81,7 @@ public class BottomMenu extends LinearLayout implements BottomMenuAdapter.ClickC
         mGestureDetector = new GestureDetector(getContext(), new DragGestureListener());
         top_recycle_view = view.findViewById(R.id.top_recycle_view);
         bottom_recycle_view = view.findViewById(R.id.bottom_recycle_view);
-        mBottomMenuDragListener = new BottomMenuDragListener(bottom_recycle_view);
+        mBottomMenuDragListener = new BottomMenuDragListener(bottom_recycle_view, this);
         Button btn_select_list_finish = view.findViewById(R.id.btn_select_list_finish);
         btn_select_list_finish.setOnClickListener(new OnClickListener() {
             @Override
@@ -98,24 +95,32 @@ public class BottomMenu extends LinearLayout implements BottomMenuAdapter.ClickC
     public void init(int[] nowBottomMenuImg, BottomMenuClickCallBack clickCallBack) {
         vib = (Vibrator) getContext().getSystemService(Service.VIBRATOR_SERVICE);
         this.bottomMenuClickCallBack = clickCallBack;
-        TypedArray resIds = getContext().getResources().obtainTypedArray(R.array.tab_bar_item_drawable_array);
+        TypedArray resIds = getContext().getResources().obtainTypedArray(R.array.tab_bar_item_drawable_array_1);
         int[] topViewList = new int[resIds.length()];
         for (int i = 0; i < resIds.length(); i++) {
             topViewList[i] = resIds.getResourceId(i, -1);
         }
+        Log.d("tag1", "topViewList: " + topViewList.length);
         resIds.recycle();
         for (int item : topViewList) {
             topItemView.add(item);
         }
-        topViewTextList = getResources().getStringArray(R.array.tab_bar_item_title_array);
+        topViewTextList = getResources().getStringArray(R.array.tab_bar_item_title_array_1);
+        Log.d("tag1", "topViewTextList: " + topViewTextList.length);
         topItemText.addAll(Arrays.asList(topViewTextList));
 
         for (int value : bottomViewList) {
             selectedList.add(value);
         }
-
+        Log.d("tag1", "selectedList: " + selectedList.size());
         initTopMenu();
         initBottomMenu();
+    }
+
+    public boolean checkHasNotExistItem(ArrayList<Integer> selectedList, ArrayList<Integer> nowTopItemList) {
+        Collection<Integer> noExistItemList = new ArrayList<>(selectedList);
+        noExistItemList.removeAll(nowTopItemList);
+        return noExistItemList.size() > 0;
     }
 
     // 如果未來有要將不使用的項目移除掉 可能就需要特別檢查現在被存取的值是否已不存在
@@ -237,6 +242,18 @@ public class BottomMenu extends LinearLayout implements BottomMenuAdapter.ClickC
         }
     };
 
+    @Override
+    public void onDragStart(View v) {
+        if (mTopMenuAdapter != null)
+            mTopMenuAdapter.startDragItem(v);
+    }
+
+    @Override
+    public void onDragEnd(View v) {
+        if (mTopMenuAdapter != null)
+            mTopMenuAdapter.endDragItem(v);
+    }
+
     private class DragGestureListener extends GestureDetector.SimpleOnGestureListener {
         @Override
         public boolean onSingleTapConfirmed(MotionEvent e) {
@@ -256,6 +273,17 @@ public class BottomMenu extends LinearLayout implements BottomMenuAdapter.ClickC
         @Override
         public void onLongPress(MotionEvent e) {
             super.onLongPress(e);
+//            if (vib != null) {
+//                vib.vibrate(vibratorPattern, -1);
+//            }
+//            ClipData data = ClipData.newPlainText("", "");
+//            ItemDragShadowBuilder shadowBuilder = new ItemDragShadowBuilder(
+//                    mDragView);
+//            mDragView.startDrag(data, shadowBuilder, mDragView, 0);
+        }
+
+        @Override
+        public boolean onDown(MotionEvent e) {
             if (vib != null) {
                 vib.vibrate(vibratorPattern, -1);
             }
@@ -263,10 +291,6 @@ public class BottomMenu extends LinearLayout implements BottomMenuAdapter.ClickC
             ItemDragShadowBuilder shadowBuilder = new ItemDragShadowBuilder(
                     mDragView);
             mDragView.startDrag(data, shadowBuilder, mDragView, 0);
-        }
-
-        @Override
-        public boolean onDown(MotionEvent e) {
             return true;
         }
     }

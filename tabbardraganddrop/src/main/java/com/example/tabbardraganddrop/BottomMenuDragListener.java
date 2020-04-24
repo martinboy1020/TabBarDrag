@@ -8,9 +8,11 @@ import androidx.recyclerview.widget.RecyclerView;
 public class BottomMenuDragListener implements View.OnDragListener {
 
     private RecyclerView bottom_recycle_view;
+    private ChangeStatusCallBack changeStatusCallBack;
 
-    BottomMenuDragListener(RecyclerView bottom_recycle_view) {
+    BottomMenuDragListener(RecyclerView bottom_recycle_view, ChangeStatusCallBack changeStatusCallBack) {
         this.bottom_recycle_view = bottom_recycle_view;
+        this.changeStatusCallBack = changeStatusCallBack;
     }
 
     @Override
@@ -22,6 +24,8 @@ public class BottomMenuDragListener implements View.OnDragListener {
                 break;
             case DragEvent.ACTION_DRAG_ENTERED:
                 v.setAlpha(0.5F);
+                if(changeStatusCallBack != null)
+                    changeStatusCallBack.onDragStart(v);
                 break;
             case DragEvent.ACTION_DRAG_EXITED:
                 v.setAlpha(1F);
@@ -55,9 +59,17 @@ public class BottomMenuDragListener implements View.OnDragListener {
                 }
             case DragEvent.ACTION_DRAG_ENDED:
                 v.setAlpha(1F);
+                if(changeStatusCallBack != null)
+                    changeStatusCallBack.onDragEnd(v);
             default:
                 break;
         }
         return true;
     }
+
+    public interface ChangeStatusCallBack {
+        void onDragStart(View v);
+        void onDragEnd(View v);
+    }
+
 }

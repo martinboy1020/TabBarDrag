@@ -1,16 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <integer-array name="tab_bar_item_drawable_array">
+    <integer-array name="tab_bar_item_drawable_array_1">
         <item>@drawable/menu_gamelist</item>
-        <item>@drawable/menu_home</item>
         <item>@drawable/menu_mine</item>
+        <item>@drawable/menu_game_data</item>
+        <item>@drawable/menu_game_like</item>
+        <item>@drawable/menu_message_center</item>
+        <item>@drawable/menu_search</item>
+        <item>@drawable/menu_my_mission</item>
     </integer-array>
 
-    <string-array name="tab_bar_item_title_array">
+    <string-array name="tab_bar_item_title_array_1">
         <item>賽事</item>
-        <item>首頁</item>
         <item>我的</item>
+        <item>賽事資料</item>
+        <item>賽事追蹤</item>
+        <item>消息中心</item>
+        <item>搜尋</item>
+        <item>我的任務</item>
     </string-array>
 
 </resources>
